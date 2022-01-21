@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Maze Builder</title>
+        <link rel="stylesheet" type="text/css"
+           href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+        <script type="text/javascript" src="mazeBuilder.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+    </head>
+
+     <body class="text-dark">
+        <div class="container">
+            <div class="row" style="text-align:center;">
+                <form>
+                    <label for="exampleFormControlInput1" class="form-label">Number of rows</label>
+                    <input type="text" class="form-control" id="rows-input" placeholder="Enter number of rows">
+                </form>
+                <button type="submit" class="btn btn-primary" id="rows-input-btn">Submit</button>
+            </div>
+            <div style="text-align:center;">
+                <canvas id="myCanvas" width="200" height="200" style="border:1px solid #000000;"></canvas>
+            </div>
+        </div>
+    </body>
+</html>
