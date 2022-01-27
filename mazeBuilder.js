@@ -12,44 +12,47 @@ document.addEventListener("DOMContentLoaded", function() {
 let dr = [1, 0, -1, 0, 1, 1, -1, -1]
 let dc = [0, 1, 0, -1, 1, -1, 1, -1]
 function createMaze(r, c){
-    var arr = new Array(r+2);
-    for (var i = 0; i < arr.length; i++)arr[i] = Array(c+2)
-    for(var i = 0; i < arr.length; i++){
-        for(var j = 0; j < arr[i].length; j++){
+    r = r-r%2;
+    c = c-c%2;
+    let arr = new Array(r+2);
+    for (let i = 0; i < arr.length; i++)arr[i] = Array(c+2)
+    for(let i = 0; i < arr.length; i++){
+        for(let j = 0; j < arr[i].length; j++){
             arr[i][j] = 0;
         }
     }
-    var stack = []
+    let stack = []
     stack.push([1, 1])
     while(stack.length!=0){
-        var startdir = parseInt((Math.random()*4)) + 4
-        var rotdir = parseInt((Math.random()*2))
+        let startdir = parseInt((Math.random()*4)) + 4
+        let rotdir = parseInt((Math.random()*2))
         if(rotdir==0)rotdir=-1;
-        var cur = stack.pop()
-        var r0 = cur[0]
-        var c0 = cur[1]
-        for(var i = startdir; Math.abs(startdir-i)<4; i+=rotdir){
-            r1 = r0 + dr[i%4]
-            c1 = c0 + dc[i%4]
+        let cur = stack.pop()
+        let r0 = cur[0]
+        let c0 = cur[1]
+        for(let i = startdir; Math.abs(startdir-i)<4; i+=rotdir){
+            r1 = r0 + dr[i%4]*2
+            c1 = c0 + dc[i%4]*2
             if(!(r1>=1&&c1>=1&&r1<=r&&c1<=c))continue;
             if(arr[r1][c1]!=0)continue;
-            var canPlace = true;
-            for(var j = 0; j < 4; j++){
-                r2 = r1 + dr[j]
-                c2 = c1 + dc[j]
+            let canPlace = true;
+            for(let j = 0; j < 4; j++){
+                r2 = r1 + dr[j]*2
+                c2 = c1 + dc[j]*2
                 if(!(r2>=1&&c2>=1&&r2<=r&&c2<=c))continue;
                 if(r2==r0&&c2==c0)continue;
                 if(arr[r2][c2]!=0)canPlace = false;
             }
             if(!canPlace)continue;
+            arr[r1-dr[i%4]][c1-dc[i%4]]=1;
             arr[r1][c1] = 1;
             stack.push([r1, c1])
         }
     }
-    var cr = 0
-    var cc = 0
-    var cdir = 0
-    var peri = 0
+    let cr = 0
+    let cc = 0
+    let cdir = 0
+    let peri = 0
     while (peri < (r+c)*2+4){
         cr+=dr[cdir];
         cc+=dc[cdir];
@@ -65,7 +68,7 @@ function createMaze(r, c){
         }
         console.log(cr+" "+cc)
         arr[cr][cc] = 0;
-        var opp = ((cdir+1)*-1+5)%5-1;
+        let opp = ((cdir+1)*-1+5)%5-1;
 
         peri++;
     }
@@ -74,9 +77,9 @@ function createMaze(r, c){
 }
 function printMaze(maze){
     console.log(maze.length)
-    for (var i = 0; i < maze.length; i++) {
-        var str = ""
-        for (var j = 0; j < maze[i].length; j++)
+    for (let i = 0; i < maze.length; i++) {
+        let str = ""
+        for (let j = 0; j < maze[i].length; j++)
         {
             str += maze[i][j] + " ";
         }
@@ -85,22 +88,33 @@ function printMaze(maze){
 }
 
 function drawMaze(){
-    var canvas = document.getElementById('canvas');
+    let canvas = document.getElementById('canvas');
     
-    var rows = parseInt(document.getElementById("rows-input").value)
-    var cols = parseInt(document.getElementById("cols-input").value)
+    let rows = parseInt(document.getElementById("rows-input").value)
+    let cols = parseInt(document.getElementById("cols-input").value)
 
-    var arr = createMaze(rows, cols)
+    let arr = createMaze(rows, cols)
     alert(rows + " " + cols)
-    var ctx = canvas.getContext("2d");
-    var gridSize = 20;
-    canvas.style.width = ((rows+2)*gridSize)+"px";
-    canvas.style.height = ((cols+2)*gridSize)+"px";
+    
+    let gridSize = 10;
+    //context.canvas.height = ((rows+2)*gridSize)+"px";
+    //canvas.width = ((cols+2)*gridSize)+"px";
+    canvas.setAttribute("width", (cols+2)*gridSize);
+    canvas.setAttribute("height", (rows+2)*gridSize);
+   // canvas.style.width = ((rows+2)*gridSize)+"px";
+    //canvas.style.height = ((cols+2)*gridSize)+"px";
+    let ctx = canvas.getContext("2d");
+    //ctx.canvas.width = ((rows+2)*gridSize)+"px";
+    //ctx.canvas.height = ((cols+2)*gridSize)+"px";
+    //ctx.canvas.width = ((rows+2)*gridSize)+"px";
+    //ctx.canvas.height = ((cols+2)*gridSize)+"px";
     ctx.clearRect( 0, 0, ctx.canvas.width, ctx.canvas.height);
-    for(var i = 0; i < arr.length; i++){
-        for(var j = 0; j < arr[i].length; j++){
-            if(arr[i][j] == 0)ctx.fillStyle = "black";
-            else ctx.fillStyle="white";
+    ctx.fillStyle="#000000"
+    alert(canvas.style.width+" "+canvas.style.height)
+    for(let i = 0; i < arr.length; i++){
+        for(let j = 0; j < arr[i].length; j++){
+            if(arr[i][j] == 0)ctx.fillStyle = "#000000";
+            else ctx.fillStyle = "#FFFFFF";
             ctx.fillRect(i*gridSize, j*gridSize, gridSize, gridSize);
         }
     }
