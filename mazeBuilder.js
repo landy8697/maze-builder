@@ -1,6 +1,7 @@
 
 
 document.addEventListener("DOMContentLoaded", function() {
+    
     document.getElementById('start-btn').addEventListener('click', () => {
         drawMaze(); 
     });
@@ -9,9 +10,12 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-let dr = [1, 0, -1, 0, 1, 1, -1, -1]
-let dc = [0, 1, 0, -1, 1, -1, 1, -1]
+
 function createMaze(r, c){
+    let dir =  Array(24);
+    getRandomizedDirections(0, new Array(4), dir, 0);
+    let dr = [1, 0, -1, 0, 1, 1, -1, -1]
+    let dc = [0, 1, 0, -1, 1, -1, 1, -1]
     r = r-r%2;
     c = c-c%2;
     let arr = new Array(r+2);
@@ -24,15 +28,16 @@ function createMaze(r, c){
     let stack = []
     stack.push([1, 1])
     while(stack.length!=0){
-        let startdir = parseInt((Math.random()*4)) + 4
-        let rotdir = parseInt((Math.random()*2))
-        if(rotdir==0)rotdir=-1;
+        let dirarr = dir[parseInt(Math.random()*24)];
+       // let startdir = parseInt((Math.random()*4)) + 4
+      //  let rotdir = parseInt((Math.random()*2))
+      //  if(rotdir==0)rotdir=-1;
         let cur = stack.pop()
         let r0 = cur[0]
         let c0 = cur[1]
-        for(let i = startdir; Math.abs(startdir-i)<4; i+=rotdir){
-            r1 = r0 + dr[i%4]*2
-            c1 = c0 + dc[i%4]*2
+        for(let i = 0; i<4; i++){
+            r1 = r0 + dirarr[i]/10;
+            c1 = c0 + dirarr[i]%10;
             if(!(r1>=1&&c1>=1&&r1<=r&&c1<=c))continue;
             if(arr[r1][c1]!=0)continue;
             let canPlace = true;
@@ -97,17 +102,9 @@ function drawMaze(){
     alert(rows + " " + cols)
     
     let gridSize = 10;
-    //context.canvas.height = ((rows+2)*gridSize)+"px";
-    //canvas.width = ((cols+2)*gridSize)+"px";
     canvas.setAttribute("width", (cols+2)*gridSize);
     canvas.setAttribute("height", (rows+2)*gridSize);
-   // canvas.style.width = ((rows+2)*gridSize)+"px";
-    //canvas.style.height = ((cols+2)*gridSize)+"px";
     let ctx = canvas.getContext("2d");
-    //ctx.canvas.width = ((rows+2)*gridSize)+"px";
-    //ctx.canvas.height = ((cols+2)*gridSize)+"px";
-    //ctx.canvas.width = ((rows+2)*gridSize)+"px";
-    //ctx.canvas.height = ((cols+2)*gridSize)+"px";
     ctx.clearRect( 0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.fillStyle="#000000"
     alert(canvas.style.width+" "+canvas.style.height)
@@ -120,8 +117,25 @@ function drawMaze(){
     }
     
 }
-function getRandomizedDirections(){
 
+var idx = 0;
+function getRandomizedDirections(d, cur, dir){
+    let dr = [1, 0, -1, 0, 1, 1, -1, -1]
+    let dc = [0, 1, 0, -1, 1, -1, 1, -1]
+    if(d==4){
+        let arr = Array(4);
+        for(let i = 0; i < 4; i++){
+            arr[i] = cur[i];
+        }
+        console.log(arr);
+        dir[idx] = arr;
+        idx++;
+        return;
+    }
+    for(let i = 0; i < 4; i++){
+        cur[d] = dr[i]*10+dc[i];
+        getRandomizedDirections(d+1, cur, dir)
+    }
 }
 function startGame() {
     //alert('hi')
