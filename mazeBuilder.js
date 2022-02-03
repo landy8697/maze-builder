@@ -9,9 +9,59 @@ document.addEventListener("DOMContentLoaded", function() {
     
 });
 
-
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
 
 function createMaze(r, c){
+    r = r-r%2;
+    c = c-c%2;
+    let arr = new Array(r+2);
+    for (let i = 0; i < arr.length; i++)arr[i] = Array(c+2)
+    for(let i = 0; i < arr.length; i++){
+        for(let j = 0; j < arr[i].length; j++){
+            arr[i][j] = 0;
+        }
+    }
+    let dr = [1, 0, -1, 0]
+    let dc = [0, 1, 0, -1]
+    
+    let stack = []
+    stack.push([1, 1])
+    while(stack.length!=0){
+        let cur = stack.pop()
+        let r0 = cur[0]
+        let c0 = cur[1]
+        console.log(r0+" "+c0)
+        viscnt = 0;
+        let vis = [4]
+        while(viscnt < 4){
+            dir = getRandomInt(3);
+            if(vis[dir]==1)continue;
+            viscnt++;
+            vis[dir] = 1
+            r1 = r0 + 2*(dr[dir]);
+            c1 = c0 + 2*(dc[dir]);
+            if(!(r1>=1&&c1>=1&&r1<=r&&c1<=c))continue;
+            if(arr[r1][c1]!=0)continue;
+            let canPlace = true;
+            for(let j = 0; j < 4; j++){
+                r2 = r1 + dr[j]*2
+                c2 = c1 + dc[j]*2
+                if(!(r2>=1&&c2>=1&&r2<=r&&c2<=c))continue;
+                if(r2==r0&&c2==c0)continue;
+                if(arr[r2][c2]!=0)canPlace = false;
+            }
+            if(!canPlace)continue;
+            arr[r1][c1] = 1;
+            arr[r1-dr[dir]][c1-dc[dir]] = 1;
+            stack.push(r1, c1);
+        }
+        
+    }
+    printMaze(arr);
+    return arr;
+    /*
     let dir =  Array(24);
     getRandomizedDirections(0, new Array(4), dir, 0);
     let dr = [1, 0, -1, 0, 1, 1, -1, -1]
@@ -79,6 +129,7 @@ function createMaze(r, c){
     }
     printMaze(arr);
     return arr;
+    */
 }
 function printMaze(maze){
     console.log(maze.length)
