@@ -63,7 +63,7 @@ function createMaze(r, c){
             cdir %= 4;
             continue;
         }
-        console.log(cr+" "+cc)
+        //console.log(cr+" "+cc)
         arr[cr][cc] = 0;
         var opp = ((cdir+1)*-1+5)%5-1;
 
