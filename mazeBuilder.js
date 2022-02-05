@@ -33,13 +33,13 @@ function changeAnimation(){
     }
 }
 function createMaze(r, c){
-    r = r-r%2;
-    c = c-c%2;
-    let arr = new Array(r+1);
-    let sol = new Array(r+1)
+    //r = r-r%2;
+    //c = c-c%2;
+    let arr = new Array(r+2);
+    let sol = new Array(r+2)
     for(let i = 0; i < arr.length; i++){
-        arr[i] = Array(c+1)
-        sol[i] = Array(c+1)
+        arr[i] = Array(c+2)
+        sol[i] = Array(c+2)
         for(let j = 0; j < arr[i].length; j++){
             
             arr[i][j] = 0;
@@ -47,7 +47,8 @@ function createMaze(r, c){
     }
     let dr = [1, 0, -1, 0]
     let dc = [0, 1, 0, -1]
-    
+    let ar = [1, 1, -1, -1]
+    let ac = [-1, 1, 1, -1]
     
     let stack = []
     stack.push([1, 1])
@@ -65,8 +66,8 @@ function createMaze(r, c){
             if(vis[dir]==1)continue;
             viscnt++;
             vis[dir] = 1
-            r1 = r0 + 2*(dr[dir]);
-            c1 = c0 + 2*(dc[dir]);
+            r1 = r0 + dr[dir];
+            c1 = c0 + dc[dir];
             if(!(r1>=1&&c1>=1&&r1<=r&&c1<=c))continue;
             if(arr[r1][c1]!=0)continue;
             let canPlace = true;
@@ -77,14 +78,22 @@ function createMaze(r, c){
                 if(r2==r0&&c2==c0)continue;
                 if(arr[r2][c2]!=0)canPlace = false;
             }
+            for(let j = 0; j < 2; j++){
+                r2 = r1 + ar[(dir+j)%4];
+                c2 = c1 + ac[(dir+j)%4];
+                if(!(r2>=1&&c2>=1&&r2<=r&&c2<=c))continue;
+                if(arr[r2][c2]!=0)canPlace = false;
+            }
+            
             if(!canPlace)continue;
             arr[r1][c1] = 1;
             sol[r1][c1] = [r1-dr[dir], c1-dc[dir]];
-            arr[r1-dr[dir]][c1-dc[dir]] = 1;
-            sol[r1-dr[dir]][c1-dc[dir]] = [r1-dr[dir]*2, c1-dc[dir]*2];
+            //arr[r1-dr[dir]][c1-dc[dir]] = 1;
+            //sol[r1-dr[dir]][c1-dc[dir]] = [r1-dr[dir]*2, c1-dc[dir]*2];
             stack.push([r1, c1]);
         }  
     }
+    printMaze(arr);
     arr[1][0] = 1;
     sol[1][1] = [1, 0];
     let cr = arr.length-1;
@@ -92,20 +101,21 @@ function createMaze(r, c){
         if(arr[cr][arr[cr].length-2]==1)break;
         cr--;
     }
+    console.log(cr)
     arr[cr][arr[cr].length-1] = 1;
     sol[cr][arr[cr].length-1] = [cr, arr[cr].length-2];
-    printMaze(arr);
+    
     return [arr, sol];
 }
 function printMaze(maze){
-    //console.log(maze.length)
+    console.log(maze.length)
     for (let i = 0; i < maze.length; i++) {
         let str = ""
         for (let j = 0; j < maze[i].length; j++)
         {
             str += maze[i][j] + " ";
         }
-        //console.log(str);
+        console.log(str);
     }
 }
 
