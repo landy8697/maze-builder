@@ -1,4 +1,7 @@
 
+//Possible Additions: Select 2 points, generate shortest path betweeen those 2 points
+//Zooming in
+//Animations for the maze generation
 
 document.addEventListener("DOMContentLoaded", function() {
     
@@ -15,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
 var maze;
 var sol;
 var animate = true;
+var generated = false;
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
@@ -33,13 +37,14 @@ function changeAnimation(){
     }
 }
 function createMaze(r, c){
-    //r = r-r%2;
-    //c = c-c%2;
-    let arr = new Array(r+2);
-    let sol = new Array(r+2)
+    r = r-r%2;
+    c = c-c%2;
+    
+    let arr = new Array(r+1);
+    let sol = new Array(r+1)
     for(let i = 0; i < arr.length; i++){
-        arr[i] = Array(c+2)
-        sol[i] = Array(c+2)
+        arr[i] = Array(c+1)
+        sol[i] = Array(c+1)
         for(let j = 0; j < arr[i].length; j++){
             
             arr[i][j] = 0;
@@ -66,8 +71,8 @@ function createMaze(r, c){
             if(vis[dir]==1)continue;
             viscnt++;
             vis[dir] = 1
-            r1 = r0 + dr[dir];
-            c1 = c0 + dc[dir];
+            r1 = r0 + dr[dir] *2;
+            c1 = c0 + dc[dir] *2;
             if(!(r1>=1&&c1>=1&&r1<=r&&c1<=c))continue;
             if(arr[r1][c1]!=0)continue;
             let canPlace = true;
@@ -78,22 +83,25 @@ function createMaze(r, c){
                 if(r2==r0&&c2==c0)continue;
                 if(arr[r2][c2]!=0)canPlace = false;
             }
+            /*
             for(let j = 0; j < 2; j++){
                 r2 = r1 + ar[(dir+j)%4];
                 c2 = c1 + ac[(dir+j)%4];
                 if(!(r2>=1&&c2>=1&&r2<=r&&c2<=c))continue;
                 if(arr[r2][c2]!=0)canPlace = false;
             }
-            
+            */
             if(!canPlace)continue;
             arr[r1][c1] = 1;
             sol[r1][c1] = [r1-dr[dir], c1-dc[dir]];
-            //arr[r1-dr[dir]][c1-dc[dir]] = 1;
-            //sol[r1-dr[dir]][c1-dc[dir]] = [r1-dr[dir]*2, c1-dc[dir]*2];
+            arr[r1-dr[dir]][c1-dc[dir]] = 1;
+            sol[r1-dr[dir]][c1-dc[dir]] = [r1-dr[dir]*2, c1-dc[dir]*2];
+            if(viscnt < 4)stack.push([r0, c0])
             stack.push([r1, c1]);
+            break;
         }  
     }
-    printMaze(arr);
+   // printMaze(arr);
     arr[1][0] = 1;
     sol[1][1] = [1, 0];
     let cr = arr.length-1;
@@ -120,6 +128,7 @@ function printMaze(maze){
 }
 
 function drawMaze(){
+    generated = false;
     let canvas = document.getElementById('canvas');
     let rows = parseInt(document.getElementById("rows-input").value)
     let cols = parseInt(document.getElementById("cols-input").value)
@@ -141,10 +150,12 @@ function drawMaze(){
             ctx.fillRect(j*gridSize, i*gridSize, gridSize, gridSize);
         }
     }
+    generated = true;
     
 }
 
 async function drawSolution(){
+    if(!generated)return;
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext("2d");
     ctx.fillStyle = "#0000FF";
@@ -179,9 +190,12 @@ async function drawSolution(){
         let j = cur[1];
         
         if(animate)await sleep(delay);
-        ctx.fillRect(j*gridSize, i*gridSize, gridSize, gridSize);
+        fillRect(ctx, j*gridSize, i*gridSize, gridSize, gridSize);
         
     }
+}
+async function fillRect(ctx, a, b, c, d){
+    ctx.fillRect(a, b, c, d);
 }
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
