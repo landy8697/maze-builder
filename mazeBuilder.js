@@ -6,8 +6,10 @@
 document.addEventListener("DOMContentLoaded", function() {
     
     document.getElementById('start-btn').addEventListener('click', () => {
+        continueAnimation = false;
         drawMaze(); 
     });document.getElementById('solution').addEventListener('click', () => {
+        continueAnimation = true;
         drawSolution(); 
     });document.getElementById('animation').addEventListener('click', () => {
         changeAnimation();
@@ -19,6 +21,7 @@ var maze;
 var sol;
 var animate = true;
 var generated = false;
+var continueAnimation = true;
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
@@ -181,7 +184,8 @@ async function drawSolution(){
         c = sol[tr][tc][1];
     }
     
-    let delay = 50/(stack.length*stack.length);
+    let delay = 10000/((stack.length*stack.length));
+    let useDelay = true;
     console.log("Delay: "+delay)
     console.log(animate)
     while(!(stack.length==0)){
@@ -189,7 +193,8 @@ async function drawSolution(){
         let i = cur[0];
         let j = cur[1];
         
-        if(animate)await sleep(delay);
+        if(animate && useDelay)await sleep(delay);
+        if(!continueAnimation)return;
         fillRect(ctx, j*gridSize, i*gridSize, gridSize, gridSize);
         
     }
